@@ -1,0 +1,7 @@
+---
+- name: Create Staging Area
+  hosts: localhost
+  gather_facts: false
+
+- import_playbook: vlanAdd.yml
+- import_playbook: portgroups.yml
