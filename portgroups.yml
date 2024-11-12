@@ -1,0 +1,57 @@
+---
+- name: Create Portgroups
+  hosts: stagingesx
+  gather_facts: false
+  vars_files:
+    - vars/{{ projectname }}.yml
+  tasks:
+    - name: Enable SSH for to create and assing portgroups
+      community.vmware.vmware_host_service_manager:
+        esxi_hostname: "{{ inventory_hostname }}"
+        hostname: "{{ inventory_hostname }}"
+        password: "{{ ansible_password }}"
+        username: "{{ ansible_user }}"
+        validate_certs: no
+        service_name: TSM-SSH
+        state: start
+      delegate_to: localhost
+
+    - name: Create Portgroup
+      vmware_portgroup:
+        hostname: "{{ inventory_hostname }}"
+        hosts: "{{ inventory_hostname }}"
+        username: "{{ ansible_user }}"
+        password: "{{ ansible_password }}"
+        switch: StagingPortgroups
+        portgroup: "{{ project }}"
+        vlan_id: "{{ portgroup }}"
+        validate_certs: no
+        security:
+          promiscuous_mode: false
+          mac_changes: false
+          forged_transmits: false
+          #when:  item.porgroup  == True
+          #with_items: "{{ vlans }}"
+      delegate_to: localhost
+
+    - name: assign portgroup to VM
+      vmware_guest_network:
+        esxi_hostname: "{{ inventory_hostname }}"
+        hostname: "{{ inventory_hostname }}"
+        username: "{{ ansible_user }}"
+        password: "{{ ansible_password }}"
+        validate_certs: no
+        name: "{{ username }}"
+        network_name: "{{ project }}"
+      delegate_to: localhost
+
+    - name: Disable SSH for to create and assing portgroups
+      community.vmware.vmware_host_service_manager:
+        esxi_hostname: "{{ inventory_hostname }}"
+        hostname: "{{ inventory_hostname }}"
+        password: "{{ ansible_password }}"
+        username: "{{ ansible_user }}"
+        validate_certs: no
+        service_name: TSM-SSH
+        state: stop
+      delegate_to: localhost        
