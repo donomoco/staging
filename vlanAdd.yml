@@ -1,7 +1,7 @@
 ---
 - name: Create VLAN on NXOS network info
   #hosts: '{{target}}'
-  hosts: switches
+  hosts: staging_switches
   connection: network_cli
   gather_facts: no
 
