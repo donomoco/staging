@@ -1,6 +1,6 @@
 ---
 - name: Create Staging Area
-  hosts: localhost
+  hosts: all
   gather_facts: false
 
 - import_playbook: vlanAdd.yml
